@@ -328,6 +328,8 @@ Please keep dependencies minimal — the spirit of the project is "stdlib + a sp
 
 **完全离线可用**：AI 功能关掉就是一个纯本地文献管理工具。
 
+**鸣谢**：感谢 MiniMax 团队发布的 M3 模型，其 agentic coding 能力杰出，本项目大部分使用其进行编码。
+
 ---
 
 <div align="center">
