@@ -246,6 +246,29 @@ class AgentSearchTest(unittest.TestCase):
         self.assertEqual(data["results"], [])
 
 
+class AgentTagReadTest(unittest.TestCase):
+    def test_get_tags(self):
+        from app import ROOT
+        pdfs = [p.name for p in ROOT.iterdir() if p.suffix.lower() == ".pdf"]
+        if not pdfs:
+            self.skipTest("No PDFs in project root to test against")
+        name = pdfs[0]
+        with _LiveServer() as srv:
+            port = srv.server.server_address[1]
+            encoded = urllib.parse.quote(name, safe="")
+            with urllib.request.urlopen(f"http://127.0.0.1:{port}/api/agent/papers/{encoded}/tags") as r:
+                data = json.loads(r.read())
+        self.assertIn("tags", data)
+        self.assertIsInstance(data["tags"], list)
+
+    def test_get_tags_nonexistent_returns_404(self):
+        with _LiveServer() as srv:
+            port = srv.server.server_address[1]
+            with self.assertRaises(urllib.error.HTTPError) as ctx:
+                urllib.request.urlopen("http://127.0.0.1:{port}/api/agent/papers/ghost.pdf/tags".format(port=port))
+            self.assertEqual(ctx.exception.code, 404)
+
+
 class AgentTagWriteTest(unittest.TestCase):
     def test_set_tags(self):
         from app import ROOT

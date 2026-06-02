@@ -827,25 +827,36 @@ class PaperHandler(BaseHTTPRequestHandler):
 
         # API: Agent - 单篇论文详情 /api/agent/papers/{name}
         if path.startswith("/api/agent/papers/"):
-            # Skip the "tags" subroute — handled separately
-            if not path.endswith("/tags"):
-                name = urllib.parse.unquote(path[len("/api/agent/papers/"):])
+            if path.endswith("/tags"):
+                # GET /api/agent/papers/{name}/tags — read tags
+                name = urllib.parse.unquote(path[len("/api/agent/papers/"):-len("/tags")])
                 if not name:
                     self._send_json({"error": "invalid name"}, 400)
                     return
-                paper_map = {p["name"]: p for p in get_papers()}
-                p = paper_map.get(name)
-                if not p:
+                tags = load_tags()
+                if name not in tags:
                     self._send_json({"error": "not found"}, 404)
                     return
-                self._send_json({
-                    "name": name,
-                    "title": p.get("display") or name,
-                    "abstract": p.get("abstract", ""),
-                    "tags": p.get("tags", []),
-                    "notes": p.get("notes", "")
-                })
+                self._send_json({"tags": tags[name]})
                 return
+            # else: detail endpoint
+            name = urllib.parse.unquote(path[len("/api/agent/papers/"):])
+            if not name:
+                self._send_json({"error": "invalid name"}, 400)
+                return
+            paper_map = {p["name"]: p for p in get_papers()}
+            p = paper_map.get(name)
+            if not p:
+                self._send_json({"error": "not found"}, 404)
+                return
+            self._send_json({
+                "name": name,
+                "title": p.get("display") or name,
+                "abstract": p.get("abstract", ""),
+                "tags": p.get("tags", []),
+                "notes": p.get("notes", "")
+            })
+            return
 
         # 静态文件 /static/...
         if path.startswith("/static/"):
