@@ -223,7 +223,7 @@ The brief generated above is already agent-ready. To hand it off to Claude Code:
    It contains `brief.md`, `CLAUDE.md`, `selected-papers.json`, a starter script (`start-claude.sh` or `.bat`), and 3 Skills under `.claude/skills/`.
 3. `cd` into that directory and run `claude`. Claude Code auto-discovers the Skills and uses the brief as its task spec.
 
-The Skills (`whiskershelf-brief`, `whiskershelf-search`, `whiskershelf-tag`) guide CC through a research workflow: read the brief, propose a plan, search your library for context, tag progress. See `static/skills/` for the templates and the spec at `docs/superpowers/specs/` for the design rationale.
+The Skills (`whiskershelf-brief`, `whiskershelf-search`, `whiskershelf-tag`) guide CC through a research workflow: read the brief, propose a plan, search your library for context, tag progress. See `whiskershelf-skills/` for the templates and the spec at `docs/superpowers/specs/` for the design rationale.
 
 ---
 

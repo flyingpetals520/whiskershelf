@@ -20,9 +20,9 @@
 |---|---|
 | `tests/__init__.py` | Marks tests as a package (empty) |
 | `tests/test_app.py` | Unittest test cases for the new module |
-| `static/skills/whiskershelf-brief/SKILL.md` | Skill: load and interpret an Idea Spark brief |
-| `static/skills/whiskershelf-search/SKILL.md` | Skill: query the local library |
-| `static/skills/whiskershelf-tag/SKILL.md` | Skill: read/write tags with confirmation gate |
+| `whiskershelf-skills/whiskershelf-brief/SKILL.md` | Skill: load and interpret an Idea Spark brief |
+| `whiskershelf-skills/whiskershelf-search/SKILL.md` | Skill: query the local library |
+| `whiskershelf-skills/whiskershelf-tag/SKILL.md` | Skill: read/write tags with confirmation gate |
 
 ### Files to Modify
 

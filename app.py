@@ -28,6 +28,7 @@ if _arg_root:
 else:
     ROOT = Path(".").resolve()
 STATIC_DIR = Path(__file__).resolve().parent / "static"  # static 永远在 app.py 同目录
+SKILLS_DIR = Path(__file__).resolve().parent / "whiskershelf-skills"  # 顶层 skills 模板目录
 TAGS_FILE = ROOT / "paper_tags.json"
 PRESETS_FILE = ROOT / "tag_presets.json"
 READING_FILE = ROOT / "paper_reading.json"
@@ -705,10 +706,9 @@ You are a research collaborator, not just a code generator. Before writing code:
         encoding="utf-8"
     )
 
-    # Copy Skill templates
-    skills_src = STATIC_DIR / "skills"
-    if skills_src.exists():
-        copytree(skills_src, target / ".claude" / "skills")
+    # Copy Skill templates from the top-level whiskershelf-skills/ directory
+    if SKILLS_DIR.exists():
+        copytree(SKILLS_DIR, target / ".claude" / "skills")
 
     return target
 
