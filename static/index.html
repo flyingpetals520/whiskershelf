@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📚 我的温馨文献库</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Patrick+Hand&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="page-background">
+        <div class="noise-overlay"></div>
+    </div>
+
+    <!-- 左上角装饰：树木秋千小桥流水 -->
+    <div class="deco-scene deco-top-left">
+        <svg viewBox="0 0 320 280" class="scene-svg" xmlns="http://www.w3.org/2000/svg">
+            <!-- 地面 -->
+            <ellipse cx="160" cy="260" rx="140" ry="18" fill="#d4c5a9" opacity="0.6"/>
+            
+            <!-- 小树丛 -->
+            <circle cx="40" cy="240" r="14" fill="#b8c99a"/>
+            <circle cx="58" cy="248" r="10" fill="#a8bf85"/>
+            <circle cx="26" cy="248" r="10" fill="#c4d6a8"/>
+            
+            <!-- 大树干 -->
+            <rect x="145" y="160" width="18" height="85" rx="3" fill="#b8956a"/>
+            <!-- 大树冠 -->
+            <circle cx="154" cy="135" r="38" fill="#8ab17d" opacity="0.9"/>
+            <circle cx="130" cy="155" r="28" fill="#9bc08a" opacity="0.85"/>
+            <circle cx="178" cy="150" r="30" fill="#7da370" opacity="0.85"/>
+            <circle cx="154" cy="110" r="26" fill="#a5c995" opacity="0.8"/>
+            
+            <!-- 树枝 -->
+            <line x1="154" y1="135" x2="105" y2="118" stroke="#b8956a" stroke-width="4" stroke-linecap="round"/>
+            
+            <!-- 秋千 -->
+            <g class="swing-group">
+                <line x1="105" y1="118" x2="105" y2="185" stroke="#a07050" stroke-width="2.5"/>
+                <line x1="130" y1="128" x2="130" y2="185" stroke="#a07050" stroke-width="2.5"/>
+                <rect x="95" y="185" width="45" height="7" rx="3" fill="#d4a373"/>
+            </g>
+            
+            <!-- 小桥 -->
+            <path d="M220 240 Q260 210 300 240" fill="none" stroke="#c4a882" stroke-width="5" stroke-linecap="round"/>
+            <line x1="220" y1="240" x2="300" y2="240" stroke="#c4a882" stroke-width="4" stroke-linecap="round"/>
+            
+            <!-- 流水 -->
+            <path class="water-flow" d="M230 252 Q245 248 260 252 Q275 256 290 252" fill="none" stroke="#8ecae6" stroke-width="2.5" stroke-linecap="round" opacity="0.7"/>
+            <path class="water-flow" d="M240 260 Q255 256 270 260 Q285 264 300 260" fill="none" stroke="#8ecae6" stroke-width="2" stroke-linecap="round" opacity="0.5"/>
+            
+            <!-- 水波纹装饰点 -->
+            <circle class="ripple" cx="250" cy="255" r="2" fill="#8ecae6" opacity="0.6"/>
+            <circle class="ripple" cx="270" cy="258" r="1.5" fill="#8ecae6" opacity="0.5"/>
+            <circle class="ripple" cx="285" cy="254" r="2" fill="#8ecae6" opacity="0.6"/>
+        </svg>
+    </div>
+
+    <!-- 回顶按钮 -->
+    <button class="btn-back-to-top" id="backToTopBtn" title="回到顶部">⬆️</button>
+
+    <!-- 右下角装饰：千纸鹤 + 折纸小人 -->
+    <div class="deco-scene deco-bottom-right">
+        <!-- 千纸鹤 -->
+        <svg viewBox="0 0 120 120" class="crane-svg" xmlns="http://www.w3.org/2000/svg">
+            <polygon points="60,25 85,55 60,50 35,55" fill="#f4a261" opacity="0.9"/>
+            <polygon class="wing-left" points="60,50 25,35 60,25" fill="#e9c46a" opacity="0.85"/>
+            <polygon class="wing-right" points="60,50 95,35 60,25" fill="#e9c46a" opacity="0.85"/>
+            <polygon points="60,50 60,85 75,65" fill="#f4a261" opacity="0.7"/>
+            <circle cx="60" cy="25" r="2.5" fill="#e76f51"/>
+        </svg>
+
+        <!-- 折纸小人 -->
+        <div class="doll-wrapper" id="dollWrapper">
+            <svg viewBox="0 0 100 150" class="doll-svg" xmlns="http://www.w3.org/2000/svg">
+                <!-- 地面阴影 -->
+                <ellipse cx="50" cy="142" rx="32" ry="6" fill="rgba(0,0,0,0.08)"/>
+                
+                <!-- 身体（折纸感多边形） -->
+                <polygon points="50,42 18,95 82,95" fill="#f4d06f"/>
+                <polygon points="50,42 18,95 40,95" fill="#e9c46a" opacity="0.55"/>
+                
+                <!-- 左腿 -->
+                <polygon points="38,95 30,138 46,138 48,95" fill="#e9c46a"/>
+                <line x1="38" y1="95" x2="30" y2="138" stroke="#d4a373" stroke-width="1" opacity="0.35"/>
+                
+                <!-- 右腿 -->
+                <polygon points="62,95 54,138 70,138 52,95" fill="#e9c46a"/>
+                <line x1="62" y1="95" x2="54" y2="138" stroke="#d4a373" stroke-width="1" opacity="0.35"/>
+                
+                <!-- 左手臂 -->
+                <polygon points="22,62 2,85 16,88 30,68" fill="#f4a261"/>
+                <line x1="22" y1="62" x2="2" y2="85" stroke="#d4a373" stroke-width="1" opacity="0.3"/>
+                
+                <!-- 右手臂 -->
+                <polygon points="78,62 98,85 84,88 70,68" fill="#f4a261"/>
+                <line x1="78" y1="62" x2="98" y2="85" stroke="#d4a373" stroke-width="1" opacity="0.3"/>
+                
+                <!-- 头部 -->
+                <circle cx="50" cy="32" r="24" fill="#fae1dd"/>
+                
+                <!-- 头发/折纸头饰 -->
+                <path d="M26,24 Q50,2 74,24 Q66,14 50,10 Q34,14 26,24" fill="#e76f51" opacity="0.85"/>
+                <polygon points="50,8 38,18 62,18" fill="#e76f51" opacity="0.6"/>
+                
+                <!-- 眼睛 -->
+                <circle cx="42" cy="32" r="3" fill="#4a3f35"/>
+                <circle cx="58" cy="32" r="3" fill="#4a3f35"/>
+                <circle cx="43.5" cy="30.5" r="1" fill="#fff"/>
+                <circle cx="59.5" cy="30.5" r="1" fill="#fff"/>
+                
+                <!-- 腮红 -->
+                <circle cx="36" cy="38" r="3.5" fill="#ffadad" opacity="0.45"/>
+                <circle cx="64" cy="38" r="3.5" fill="#ffadad" opacity="0.45"/>
+                
+                <!-- 微笑 -->
+                <path d="M43,40 Q50,45 57,40" fill="none" stroke="#4a3f35" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+            <!-- 对话气泡 -->
+            <div class="speech-bubble" id="speechBubble">
+                <span id="bubbleText">今天也要加油鸭！</span>
+                <div class="bubble-tail"></div>
+            </div>
+        </div>
+    </div>
+
+    <header class="main-header">
+        <div class="header-inner">
+            <h1 class="site-title">📚 我的温馨文献库</h1>
+            <div class="header-actions">
+                <div class="search-box">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="searchInput" placeholder="搜索论文名称..." autocomplete="off">
+                </div>
+                <button class="btn-ai-search" id="aiSearchBtn" title="AI语义搜索">
+                    🤖 AI搜索
+                </button>
+                <button class="btn-ai-search" id="analyzeHabitsBtn" title="AI分析阅读习惯">
+                    🧠 AI分析
+                </button>
+                <button class="btn-ai-search" id="ideaSparkBtn" title="跨论文灵感碰撞">
+                    💡 IDEA spark!
+                </button>
+                <button class="btn-sort" id="sortBtn" title="切换排序方式">
+                    🗂️ 默认排序
+                </button>
+                <button class="btn-star-filter" id="starFilterBtn" title="筛选收藏论文">
+                    ☆ 收藏
+                </button>
+                <button class="btn-sort" id="refreshBtn" title="刷新文献列表">
+                    🔄 刷新
+                </button>
+                <button class="btn-sort" id="themeToggleBtn" title="切换主题">
+                    🌙
+                </button>
+                <button class="btn-sort" id="openFolderBtn" title="打开文献库文件夹">
+                    📂 打开文件夹
+                </button>
+                <button class="btn-sort" id="settingsBtn" title="设置">
+                    ⚙️ 设置
+                </button>
+                <button class="btn-manage-presets" id="managePresetsBtn" title="管理标签库">
+                    🏷️ 管理标签
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <nav class="tag-tabs" id="tagTabs">
+        <button class="tab-btn active" data-tag="__all__">
+            <span class="tab-pin"></span>
+            全部
+        </button>
+        <!-- 动态生成 -->
+    </nav>
+
+    <div class="recent-reads" id="recentReads" style="display:none;">
+        <span class="recent-reads-label">🕐 最近阅读</span>
+        <div class="recent-reads-list" id="recentReadsList"></div>
+        <img src="/static/cat_src.png" class="cat-on-shelf" alt="🐈‍⬛" draggable="false">
+    </div>
+
+    <main class="board" id="board">
+        <div class="column-container" id="paperGrid">
+            <!-- 动态生成卡片 -->
+        </div>
+        <div class="empty-state" id="emptyState" style="display:none;">
+            <div class="empty-illustration">🍃</div>
+            <p>这里空空如也，像一张等待书写的白纸...</p>
+        </div>
+    </main>
+
+    <!-- 编辑标签模态框 -->
+    <div class="modal-overlay" id="editModal" style="display:none;">
+        <div class="modal-card modal-card-wide">
+            <div class="modal-tape"></div>
+            <h2>🏷️ 编辑标签</h2>
+            <p class="modal-paper-name" id="modalPaperName"></p>
+
+            <!-- 摘要 + 笔记 并排 -->
+            <div class="text-areas-row">
+                <div class="abstract-editor-area">
+                    <h3 class="panel-title">📝 论文摘要</h3>
+                    <textarea id="paperAbstractInput" placeholder="在此粘贴论文摘要，AI推荐标签会更准确..."></textarea>
+                    <div class="abstract-actions">
+                        <button class="btn-extract-abstract" id="extractAbstractBtn">📝 自动提取</button>
+                        <button class="btn-save-abstract" id="saveAbstractBtn">💾 保存摘要</button>
+                    </div>
+                </div>
+                <div class="notes-editor-area">
+                    <h3 class="panel-title">📒 阅读笔记</h3>
+                    <textarea id="paperNotesInput" placeholder="记录想法、关键结论、与研究的关联..."></textarea>
+                </div>
+            </div>
+
+            <div class="tag-editor-layout">
+                <!-- 左侧：已选标签 -->
+                <div class="editor-panel">
+                    <h3 class="panel-title">已选标签</h3>
+                    <div class="current-tags-panel" id="modalCurrentTags"></div>
+                </div>
+
+                <!-- 右侧：可选预设标签 -->
+                <div class="editor-panel">
+                    <h3 class="panel-title">标签库 <span class="subtitle">点击添加</span></h3>
+                    <div class="preset-search">
+                        <input type="text" id="presetSearchInput" placeholder="搜索标签..." autocomplete="off">
+                    </div>
+                    <div class="preset-tags-grid" id="presetTagsGrid"></div>
+                </div>
+            </div>
+
+            <!-- 底部：添加自定义标签 + AI推荐 -->
+            <div class="custom-tag-area">
+                <div class="add-tag-row">
+                    <input type="text" id="newTagInput" placeholder="输入自定义标签，回车添加..." maxlength="30">
+                    <button id="addTagBtn">➕ 添加</button>
+                    <button class="btn-ai-recommend" id="aiRecommendBtn" title="AI自动推荐标签">🤖 AI推荐</button>
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn-save" id="saveTagsBtn">💾 保存</button>
+                <button class="btn-cancel" id="cancelBtn">取消</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 设置模态框 -->
+    <div class="modal-overlay" id="settingsModal" style="display:none;">
+        <div class="modal-card">
+            <div class="modal-tape"></div>
+            <h2>⚙️ 设置</h2>
+            <p class="modal-desc">调整一些使用偏好，让文献库更适合你。</p>
+
+            <div class="setting-group">
+                <h3 class="setting-title">👤 个性化</h3>
+                <div class="form-row">
+                    <label>昵称</label>
+                    <input type="text" id="nicknameInput" placeholder="输入你的昵称..." maxlength="20">
+                </div>
+            </div>
+
+            <div class="setting-group">
+                <h3 class="setting-title">📄 PDF 打开方式</h3>
+                <div class="radio-group">
+                    <label class="radio-label">
+                        <input type="radio" name="pdfOpenMode" value="browser" checked>
+                        <span class="radio-custom"></span>
+                        <span class="radio-text">在浏览器中打开</span>
+                    </label>
+                    <label class="radio-label">
+                        <input type="radio" name="pdfOpenMode" value="system">
+                        <span class="radio-custom"></span>
+                        <span class="radio-text">用系统默认程序直接打开（如 PDFgear）</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="setting-group">
+                <h3 class="setting-title">🤖 AI 配置</h3>
+                <div class="ai-config-form">
+                    <div class="form-row">
+                        <label>启用 AI 功能</label>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="aiEnabled">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="form-row">
+                        <label>API Key</label>
+                        <input type="password" id="aiApiKey" placeholder="sk-xxxxxxxx">
+                    </div>
+                    <div class="form-row">
+                        <label>Base URL</label>
+                        <input type="text" id="aiBaseUrl" placeholder="https://api.deepseek.com/v1" value="https://api.deepseek.com/v1">
+                    </div>
+                    <div class="form-row">
+                        <label>模型</label>
+                        <input type="text" id="aiModel" placeholder="deepseek-chat" value="deepseek-chat">
+                    </div>
+                    <div class="form-row">
+                        <label>启用思考模式（输出思维链）</label>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="aiThinkingEnabled">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="form-row" id="thinkingBudgetRow" style="display:none;">
+                        <label>思考 token 预算 <span class="form-hint">（仅推理模型生效，建议 1024-8192）</span></label>
+                        <input type="number" id="aiThinkingBudget" min="256" max="32768" step="256" value="2048">
+                    </div>
+                    <button class="btn-ai-test" id="testAiBtn">🧪 测试连接</button>
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn-save" id="closeSettingsBtn">完成</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 管理预设标签模态框 -->
+    <div class="modal-overlay" id="presetsModal" style="display:none;">
+        <div class="modal-card">
+            <div class="modal-tape"></div>
+            <h2>🏷️ 管理标签库</h2>
+            <p class="modal-desc">在此添加或删除预设标签，方便后续快速为论文打标签。</p>
+
+            <div class="preset-list" id="presetList"></div>
+
+            <div class="add-tag-row" style="margin-top:1rem;">
+                <input type="text" id="newPresetInput" placeholder="输入新标签名称..." maxlength="30">
+                <button id="addPresetBtn">➕ 添加</button>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn-save" id="closePresetsBtn">完成</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI阅读习惯分析模态框 -->
+    <div class="modal-overlay" id="analysisModal" style="display:none;">
+        <div class="modal-card modal-card-wide analysis-layout">
+            <div class="modal-tape"></div>
+            <h2>🧠 AI阅读习惯分析</h2>
+            <div class="analysis-body">
+                <div class="analysis-sidebar" id="analysisSidebar">
+                    <div class="analysis-sidebar-title">📜 历史记录</div>
+                    <div class="analysis-sidebar-list" id="analysisHistoryList"></div>
+                </div>
+                <div class="analysis-content" id="analysisContent">
+                    <div class="analysis-loading">点击"🧠 AI分析"按钮开始分析</div>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-save" id="runAnalysisBtn">🧠 一键分析</button>
+                <button class="btn-cancel" id="closeAnalysisBtn">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Idea Spark 跨论文灵感碰撞模态框 -->
+    <div class="modal-overlay" id="ideaSparkModal" style="display:none;">
+        <div class="modal-card modal-card-wide analysis-layout">
+            <div class="modal-tape"></div>
+            <h2>💡 Idea Spark — 跨论文灵感碰撞</h2>
+            <div class="analysis-body">
+                <div class="analysis-sidebar" id="ideaSparkSidebar">
+                    <div class="analysis-sidebar-title">📜 历史会话</div>
+                    <div class="analysis-sidebar-list" id="ideaSparkHistoryList"></div>
+                </div>
+                <div class="idea-spark-main">
+                    <!-- 论文选择区 -->
+                    <div class="idea-section">
+                        <div class="idea-section-title">
+                            <span>📚 选择论文（2-4 篇）</span>
+                            <span class="idea-counter" id="ideaCounter">已选 0/4</span>
+                        </div>
+                        <input type="text" class="idea-paper-search" id="ideaPaperSearch" placeholder="🔍 搜索论文名称或标签..." autocomplete="off">
+                        <div class="idea-selected-chips" id="ideaSelectedChips"></div>
+                        <div class="idea-paper-results" id="ideaPaperResults"></div>
+                    </div>
+                    <!-- 用户上下文 -->
+                    <div class="idea-section">
+                        <div class="idea-section-title">💬 补充研究背景/约束（可选）</div>
+                        <textarea class="idea-context-textarea" id="ideaUserContext" placeholder="例如：我手上有 X 数据集，希望解决 Y 问题；或者对 Z 方向特别感兴趣..." maxlength="500"></textarea>
+                    </div>
+                    <!-- 操作按钮 -->
+                    <div class="idea-actions-row">
+                        <button class="btn-ai-recommend" id="runIdeaSparkBtn">✨ 火花碰撞!</button>
+                        <button class="btn-cancel" id="clearIdeaSparkBtn">🗑️ 清空选择</button>
+                    </div>
+                    <!-- 结果区 -->
+                    <div class="idea-section idea-result-section">
+                        <div class="idea-section-title">📝 灵感火花</div>
+                        <div class="idea-thinking-panel" id="ideaThinkingPanel" style="display:none;">
+                            <details>
+                                <summary>💭 模型的思考过程 <span class="idea-thinking-meta" id="ideaThinkingMeta"></span></summary>
+                                <div class="idea-thinking-content" id="ideaThinkingContent"></div>
+                            </details>
+                        </div>
+                        <div class="analysis-content idea-result-area" id="ideaSparkResult">
+                            <div class="analysis-loading">选择 2-4 篇论文后点击"✨ 火花碰撞!"开始</div>
+                        </div>
+                        <div class="idea-result-toolbar" id="ideaResultToolbar" style="display:none;">
+                            <button class="btn-ai-recommend" id="downloadMdBtn">💾 下载为 .md</button>
+                            <button class="btn-ai-recommend" id="copyMdBtn">📋 复制源码</button>
+                            <button class="btn-ai-recommend" id="viewSourceBtn">👁️ 查看/编辑源码</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-cancel" id="closeIdeaSparkBtn">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 源码编辑弹层 -->
+    <div class="modal-overlay" id="sourceOverlay" style="display:none; z-index:1100;">
+        <div class="modal-card modal-card-wide" style="max-width: 900px;">
+            <div class="modal-tape"></div>
+            <h2>📝 源码 / 编辑</h2>
+            <textarea id="sourceEditor" style="width:100%; min-height: 400px; font-family: 'Cascadia Code', 'Consolas', monospace; font-size: 0.9rem; padding: 0.6rem; border: 2px solid var(--accent); border-radius: var(--radius); background:#fffbe6; resize: vertical;"></textarea>
+            <div class="modal-actions">
+                <button class="btn-save" id="applySourceBtn">应用到结果</button>
+                <button class="btn-cancel" id="cancelSourceBtn">取消</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="/static/app.js?v=6"></script>
+</body>
+</html>
