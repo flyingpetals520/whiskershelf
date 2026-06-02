@@ -1,5 +1,5 @@
 <div align="center">
-<img src="./static/cat_src_2.png" alt="WhiskerShelf — a cat stretching on the shelf" width="320" />
+<img src="./static/cat_src_2.png" alt="WhiskerShelf — a cat stretching on the shelf" width="300" />
 
 # 🐾 AI WhiskerShelf · AI 温馨文献书架
 
