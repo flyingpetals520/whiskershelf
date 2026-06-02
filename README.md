@@ -3,7 +3,7 @@
 
 # 🐾 AI WhiskerShelf · AI 温馨文献书架
 
-**A cozy local LLM-powered paper library manager with claude code skills for your spark 
+**A cozy local LLM-powered paper library manager with claude code skills for your spark<br>
 — and a cute cat on the shelf!**
 
 Stack your research on a digital corkboard, and let a curious cat watch over the ones you read most recently.
