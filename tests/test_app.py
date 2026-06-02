@@ -1,7 +1,12 @@
 """Tests for WhiskerShelf app. Uses stdlib unittest only."""
 import json
 import tempfile
+import threading
+import time
 import unittest
+import urllib.error
+import urllib.request
+from http.server import HTTPServer
 from pathlib import Path
 
 from app import build_cc_project
@@ -78,6 +83,65 @@ class BuildCCProjectTest(unittest.TestCase):
         self.assertTrue((skills_dir / "whiskershelf-brief" / "SKILL.md").exists())
         self.assertTrue((skills_dir / "whiskershelf-search" / "SKILL.md").exists())
         self.assertTrue((skills_dir / "whiskershelf-tag" / "SKILL.md").exists())
+
+
+from app import PaperHandler
+
+
+class _LiveServer:
+    """Context manager that runs PaperHandler on a random port in a thread."""
+    def __enter__(self):
+        self.server = HTTPServer(("127.0.0.1", 0), PaperHandler)
+        self.port = self.server.server_address[1]
+        self.thread = threading.Thread(target=self.server.serve_forever, daemon=True)
+        self.thread.start()
+        # Tiny sleep to let the server bind (usually unnecessary but harmless)
+        time.sleep(0.05)
+        return self
+
+    def __exit__(self, *args):
+        self.server.shutdown()
+        self.server.server_close()
+
+
+class ExportCCProjectEndpointTest(unittest.TestCase):
+    def test_missing_session_id_returns_400(self):
+        with _LiveServer() as srv:
+            port = srv.server.server_address[1]
+            req = urllib.request.Request(
+                f"http://127.0.0.1:{port}/api/idea-spark/export-cc-project",
+                data=json.dumps({}).encode("utf-8"),
+                headers={"Content-Type": "application/json"},
+                method="POST"
+            )
+            with self.assertRaises(urllib.error.HTTPError) as ctx:
+                urllib.request.urlopen(req)
+            self.assertEqual(ctx.exception.code, 400)
+
+    def test_export_with_valid_session_writes_directory(self):
+        # Seed a session directly in the history file
+        from app import add_idea_spark_session
+        sess = add_idea_spark_session(
+            papers_info=[{"name": "a.pdf", "title": "A", "abstract": "x", "tags": [], "notes": ""}],
+            user_context="ctx",
+            result_content="# brief",
+        )
+        with _LiveServer() as srv:
+            port = srv.server.server_address[1]
+            target = Path(tempfile.mkdtemp()) / "out"
+            req = urllib.request.Request(
+                f"http://127.0.0.1:{port}/api/idea-spark/export-cc-project",
+                data=json.dumps({"session_id": sess["id"], "target_dir": str(target)}).encode("utf-8"),
+                headers={"Content-Type": "application/json"},
+                method="POST"
+            )
+            with urllib.request.urlopen(req) as r:
+                data = json.loads(r.read())
+            self.assertTrue(data["success"])
+            self.assertTrue((target / "brief.md").exists())
+            self.assertTrue((target / "CLAUDE.md").exists())
+            import shutil
+            shutil.rmtree(target.parent, ignore_errors=True)
 
 
 if __name__ == "__main__":

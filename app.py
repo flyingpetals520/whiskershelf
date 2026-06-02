@@ -1055,6 +1055,37 @@ class PaperHandler(BaseHTTPRequestHandler):
             self._send_json({"success": True, "migrated": migrated, "total": len(data["sessions"])})
             return
 
+        # API: 导出 Idea Spark 为 Claude Code 项目目录 /api/idea-spark/export-cc-project
+        if path == "/api/idea-spark/export-cc-project":
+            content_len = int(self.headers.get("Content-Length", 0))
+            body = self.rfile.read(content_len).decode("utf-8")
+            try:
+                payload = json.loads(body)
+            except json.JSONDecodeError:
+                self._send_json({"error": "invalid json"}, 400)
+                return
+            session_id = payload.get("session_id", "").strip()
+            target_dir = payload.get("target_dir", "").strip()
+            if not session_id:
+                self._send_json({"error": "session_id is required"}, 400)
+                return
+            if not target_dir:
+                self._send_json({"error": "target_dir is required"}, 400)
+                return
+            session = get_idea_spark_session(session_id)
+            if not session:
+                self._send_json({"error": "session not found"}, 404)
+                return
+            try:
+                target = Path(target_dir)
+                target.mkdir(parents=True, exist_ok=True)
+                result_path = build_cc_project(session, target)
+                self._send_json({"success": True, "path": str(result_path)})
+            except Exception as e:
+                print(f"[Export CC Project Error] {e}")
+                self._send_json({"error": str(e)}, 500)
+            return
+
         # API: Idea Spark 灵感碰撞 /api/idea-spark/generate
         if path == "/api/idea-spark/generate":
             content_len = int(self.headers.get("Content-Length", 0))
