@@ -187,5 +187,40 @@ class AgentPaperDetailTest(unittest.TestCase):
             self.assertEqual(ctx.exception.code, 404)
 
 
+class AgentSearchTest(unittest.TestCase):
+    def test_search_returns_results(self):
+        with _LiveServer() as srv:
+            port = srv.server.server_address[1]
+            req = urllib.request.Request(
+                f"http://127.0.0.1:{port}/api/agent/search",
+                data=json.dumps({"query": "test"}).encode("utf-8"),
+                headers={"Content-Type": "application/json"},
+                method="POST"
+            )
+            with urllib.request.urlopen(req) as r:
+                data = json.loads(r.read())
+        self.assertIn("results", data)
+        self.assertIsInstance(data["results"], list)
+        # Each result: name, title, abstract_preview
+        if data["results"]:
+            item = data["results"][0]
+            self.assertIn("name", item)
+            self.assertIn("title", item)
+            self.assertIn("abstract_preview", item)
+
+    def test_empty_query_returns_empty_list(self):
+        with _LiveServer() as srv:
+            port = srv.server.server_address[1]
+            req = urllib.request.Request(
+                f"http://127.0.0.1:{port}/api/agent/search",
+                data=json.dumps({"query": ""}).encode("utf-8"),
+                headers={"Content-Type": "application/json"},
+                method="POST"
+            )
+            with urllib.request.urlopen(req) as r:
+                data = json.loads(r.read())
+        self.assertEqual(data["results"], [])
+
+
 if __name__ == "__main__":
     unittest.main()

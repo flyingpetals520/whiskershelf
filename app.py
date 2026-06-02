@@ -1123,6 +1123,39 @@ class PaperHandler(BaseHTTPRequestHandler):
                 self._send_json({"error": str(e)}, 500)
             return
 
+        # API: Agent - 语义搜索 /api/agent/search
+        if path == "/api/agent/search":
+            content_len = int(self.headers.get("Content-Length", 0))
+            body = self.rfile.read(content_len).decode("utf-8")
+            try:
+                payload = json.loads(body)
+            except json.JSONDecodeError:
+                self._send_json({"error": "invalid json"}, 400)
+                return
+            query = payload.get("query", "").strip()
+            if not query:
+                self._send_json({"results": []})
+                return
+            # Fall back to simple substring match across title + tags + abstract
+            # (We don't call LLM here to keep agent API zero-cost.)
+            q = query.lower()
+            results = []
+            for p in get_papers():
+                haystacks = [
+                    (p.get("display") or "").lower(),
+                    " ".join(p.get("tags", [])).lower(),
+                    (p.get("abstract") or "").lower(),
+                ]
+                if any(q in h for h in haystacks):
+                    results.append({
+                        "name": p.get("name"),
+                        "title": p.get("display") or p.get("name"),
+                        "abstract_preview": (p.get("abstract") or "")[:300]
+                    })
+            # Cap at 20 results
+            self._send_json({"results": results[:20]})
+            return
+
         # API: Idea Spark 灵感碰撞 /api/idea-spark/generate
         if path == "/api/idea-spark/generate":
             content_len = int(self.headers.get("Content-Length", 0))
