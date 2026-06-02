@@ -825,6 +825,28 @@ class PaperHandler(BaseHTTPRequestHandler):
             self._send_json({"papers": summary})
             return
 
+        # API: Agent - 单篇论文详情 /api/agent/papers/{name}
+        if path.startswith("/api/agent/papers/"):
+            # Skip the "tags" subroute — handled separately
+            if not path.endswith("/tags"):
+                name = urllib.parse.unquote(path[len("/api/agent/papers/"):])
+                if not name:
+                    self._send_json({"error": "invalid name"}, 400)
+                    return
+                paper_map = {p["name"]: p for p in get_papers()}
+                p = paper_map.get(name)
+                if not p:
+                    self._send_json({"error": "not found"}, 404)
+                    return
+                self._send_json({
+                    "name": name,
+                    "title": p.get("display") or name,
+                    "abstract": p.get("abstract", ""),
+                    "tags": p.get("tags", []),
+                    "notes": p.get("notes", "")
+                })
+                return
+
         # 静态文件 /static/...
         if path.startswith("/static/"):
             rel = path[8:]  # 去掉 /static/

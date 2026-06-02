@@ -160,5 +160,32 @@ class AgentPapersListTest(unittest.TestCase):
             self.assertIn("abstract_preview", p)
 
 
+class AgentPaperDetailTest(unittest.TestCase):
+    def test_returns_full_paper_detail(self):
+        # Pick a real paper name from the live filesystem
+        from app import ROOT
+        pdfs = [p.name for p in ROOT.iterdir() if p.suffix.lower() == ".pdf"]
+        if not pdfs:
+            self.skipTest("No PDFs in project root to test against")
+        name = pdfs[0]
+        with _LiveServer() as srv:
+            port = srv.server.server_address[1]
+            encoded = urllib.parse.quote(name, safe="")
+            with urllib.request.urlopen(f"http://127.0.0.1:{port}/api/agent/papers/{encoded}") as r:
+                data = json.loads(r.read())
+        self.assertEqual(data["name"], name)
+        self.assertIn("title", data)
+        self.assertIn("abstract", data)
+        self.assertIn("tags", data)
+        self.assertIn("notes", data)
+
+    def test_nonexistent_returns_404(self):
+        with _LiveServer() as srv:
+            port = srv.server.server_address[1]
+            with self.assertRaises(urllib.error.HTTPError) as ctx:
+                urllib.request.urlopen(f"http://127.0.0.1:{port}/api/agent/papers/ghost.pdf")
+            self.assertEqual(ctx.exception.code, 404)
+
+
 if __name__ == "__main__":
     unittest.main()
