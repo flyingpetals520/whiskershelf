@@ -1,13 +1,13 @@
 ---
 name: whiskershelf-web-search
-description: Search the broader web (arxiv, Semantic Scholar, OpenReview, etc.) for academic papers to supplement the user's local WhiskerShelf library. Use when the local library is missing key references, when the user asks about a paper outside the library, or when validation against the wider literature is needed.
+description: Search the broader open literature (arxiv, Semantic Scholar, OpenReview, Papers With Code) for academic papers to supplement the user's local WhiskerShelf library. Use when the local library is missing key references, when the user asks about a paper outside the library, or when validation against the wider literature is needed.
 ---
 
 # Whiskershelf Web Search
 
 WhiskerShelf's `whiskershelf-search` skill only finds papers the user has already collected. This skill extends coverage to the **open literature**, so you can verify the brief against current state-of-the-art, fill in missing citations, and ground the work in the broader research conversation.
 
-You have a `WebSearch` tool (or `WebFetch` for specific URLs). Use it.
+You have a `WebSearch` tool (or `WebFetch` for specific URLs). Use it. The shell scripts in `scripts/` give you a structured CLI on top of `arxiv.org` and `Semantic Scholar` so you can search and download with a single command.
 
 ## When to use
 
@@ -21,22 +21,36 @@ You have a `WebSearch` tool (or `WebFetch` for specific URLs). Use it.
 - Routine search within the user's library (that's `whiskershelf-search`).
 - Trivia, general knowledge, or non-academic questions.
 - Questions already answered by the local library.
+- Downloading PDFs the user didn't ask for — fetching the abstract is enough to decide.
+
+## Recommended search venues (in priority order)
+
+| Venue | Best for | Free? | See |
+|---|---|---|---|
+| **arxiv.org** | Preprints, freshest signal, esp. ML/AI | yes | `references/arxiv-categories.md`, `scripts/arxiv_search.py` |
+| **Semantic Scholar** | Citation graph, "papers citing X", semantic search | yes (rate-limited) | `references/venues.md`, `scripts/s2_search.py` |
+| **OpenReview** | NeurIPS / ICML / ICLR accepted papers, reviews | yes | `references/venues.md` |
+| **Papers With Code** | Paper + code pairing, benchmark leaderboards | yes | `references/venues.md` |
+| **Google Scholar** | Broadest coverage, no API | yes (no API) | fall back to `WebSearch` |
+| **Conference proceedings** | Latest year, official version | yes | `references/venues.md` |
+
+When in doubt, **arxiv first** — it's the fastest, most open, and covers ~90% of ML/AI preprints within days of submission. Semantic Scholar second for citation context.
 
 ## Research workflow
 
 1. **Form a precise search query.** Combine the concept, method, dataset, and year range. Examples:
-   - "spiking neural network associative memory 2024..2026"
-   - "Gated DeltaNet Mamba-3 hybrid attention"
-   - "value iteration network autonomous driving arxiv"
-   - Add `arxiv.org` or `site:openreview.net` to constrain to academic venues.
+   - `"spiking neural network associative memory 2024..2026"`
+   - `"Gated DeltaNet Mamba-3 hybrid attention"`
+   - `"value iteration network autonomous driving arxiv"`
+   - Add `site:arxiv.org` or `site:openreview.net` to constrain to academic venues.
 
-2. **Run 2-4 searches with different angles.** One query rarely surfaces the full landscape. Try:
+2. **Run 2–4 searches with different angles.** One query rarely surfaces the full landscape. Try:
    - The original method/term
    - A related/competing term
-   - Recent (last 12-18 months) only
-   - Top-cited (use Semantic Scholar URL `https://api.semanticscholar.org/graph/v1/paper/search?...` if available)
+   - Recent (last 12–18 months) only
+   - Top-cited (use Semantic Scholar with `?minCitationCount=N` for "papers with traction")
 
-3. **For each promising result, fetch the abstract or paper page** with `WebFetch`. Extract:
+3. **For each promising result, fetch the abstract or paper page** with `WebFetch`, or call the structured API via the `scripts/` CLI. Extract:
    - Title, authors, year, venue
    - Abstract (one paragraph)
    - Why it matters for the user's research direction
@@ -51,19 +65,35 @@ You have a `WebSearch` tool (or `WebFetch` for specific URLs). Use it.
 
 5. **If you find a paper that DIRECTLY enables or invalidates the chosen direction**, surface it to the user immediately with a short paragraph: "I found <X> which already does <Y>. This affects the direction. Want to (a) pivot, (b) differentiate from it explicitly, or (c) proceed and cite it?"
 
-## Recommended search venues
+6. **Update `brief.md` (or the working notes) with the new references.** Don't keep the synthesis in conversation context only — it will get compressed and lost.
 
-- **arxiv.org / arxiv.org/list/<field>/<year>** — preprints, the freshest signal
-- **Semantic Scholar** — semantic search with citation context; great for "papers citing X"
-- **OpenReview** — peer-reviewed conference submissions (NeurIPS, ICML, ICLR)
-- **Google Scholar** — broadest coverage but noisier
-- **Papers With Code** — pairs papers with implementations
-- **conference proceedings pages directly** (NeurIPS.cc, ICML.cc, etc.) for the latest year
+## Shell helpers (in `scripts/`)
+
+The web-search CLI scripts use only Python stdlib + the public APIs of arxiv.org and semanticscholar.org. They save you a WebSearch round-trip when you want a structured result.
+
+```bash
+# arxiv search
+python .claude/skills/whiskershelf-web-search/scripts/arxiv_search.py \
+    --query "spiking neural network associative memory" \
+    --max 10 --since 2024
+
+# Semantic Scholar search
+python .claude/skills/whiskershelf-web-search/scripts/s2_search.py \
+    --query "RWKV-7 state evolution" --max 5
+
+# Fetch metadata for an arxiv id
+python .claude/skills/whiskershelf-web-search/scripts/fetch_paper.py --arxiv 2410.01234
+
+# Fetch metadata for a DOI or title
+python .claude/skills/whiskershelf-web-search/scripts/fetch_paper.py --doi "10.1109/CVPR.2024.00123"
+```
 
 ## Token economy
 
-Web results are noisy. Don't paste full abstracts into context — quote 1-2 sentences that matter, then reference the URL. The user can read the full paper via `whiskershelf-reveal` or fetch the URL themselves.
+Web results are noisy. Don't paste full abstracts into context — quote 1–2 sentences that matter, then reference the URL. The user can read the full paper via the file manager or fetch the URL themselves.
 
 ## Tone
 
-You are a research scout, not a search engine. Be opinionated about which results matter; ignore off-topic noise without listing it. When you find a key paper, say so directly — "this is the one to read next" is more useful than a balanced list of 10.
+You are a **research scout**, not a search engine. Be opinionated about which results matter; ignore off-topic noise without listing it. When you find a key paper, say so directly — "this is the one to read next" is more useful than a balanced list of 10.
+
+See `examples/queries.md` for a worked example of a multi-query search session.
