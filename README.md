@@ -32,7 +32,10 @@ Stack your research on a digital corkboard, and let a curious cat watch over the
 - 🤖 **AI reading habit analysis** — feed your reading history to an LLM, get personalized research direction suggestions
 - 🔍 **AI semantic search** — search by intent, not just keywords
 - 💡 **Idea Spark** — pick 2–4 papers, LLM collides them into novel research directions, with an exportable Markdown task brief ready for Claude Code
+- ⚖️ **AI 对照** — pick exactly 2 papers, get a 7-row structured comparison table (核心问题 / 方法 / 数据集 / 评估指标 / 主要结果 / 局限性 / 复现难度) plus an opinionated "关键分歧" paragraph
+- 📚 **AI 元综述** — pick 3–8 papers, get a 6-section methodology meta-review (共同方法学背景 / 方法学分类法 / 跨论文差异矩阵 / 方法学趋势 / 共同盲点 / 关键洞察)
 - 🧠 **Reasoning / Chain-of-Thought** — optional, lets you see the model's thinking process (DeepSeek-v4 / Qwen3.7-Thinking / GLM-5 / OpenAI GPT)
+- ⤢ **Result expand/collapse** — every AI-result modal has a `⤢ 放大` button to expand the result to fill the modal card; `⤡ 缩回` or `ESC` collapses (also on Idea Spark)
 - 📂 **Reveal in file manager** — one click to highlight the PDF in Windows Explorer / macOS Finder
 - 🌗 **Light / dark theme** — paper-warm by day, ink-blue by night
 - 🔌 **Zero third-party dependencies** — only the Python standard library (and optional `PyPDF2` for PDF abstract extraction)
@@ -48,6 +51,8 @@ Stack your research on a digital corkboard, and let a curious cat watch over the
 | 🏠 **Main board** | Paper cards with tag stickers, abstracts, notes, stats |
 | 🧠 **AI analyze** | LLM-analyzed reading habits with persistent history |
 | 💡 **Idea Spark** | Cross-paper brainstorming with downloadable Markdown brief |
+| ⚖️ **AI 对照** | 2-paper structured comparison with opinionated key disagreement |
+| 📚 **AI 元综述** | 3-8 paper methodology meta-review (taxonomy + matrix + blind spots) |
 | ⚙️ **Settings** | API key, base URL, model, thinking mode toggle |
 
 ---
@@ -149,6 +154,8 @@ whiskershelf/
     ├── paper_notes.json          # Per-paper reading notes
     ├── analysis_history.json     # AI analysis session history
     ├── idea_spark_history.json   # Idea Spark session history
+    ├── comparison_history.json   # AI 对照 session history
+    ├── meta_review_history.json  # AI 元综述 session history
     └── ai_config.json            # Your API key & settings
 ```
 
@@ -207,6 +214,47 @@ The LLM acts as a "research innovation catalyst", producing a structured Markdow
 
 Click **💾 下载为 .md** to get the full session — including the model's chain-of-thought when thinking mode is on.
 
+### ⚖️ AI 对照 (Compare 2 papers)
+
+The "I have to pick between X and Y" button. Click **⚖️ AI对照** in the toolbar:
+
+1. Search your library, pick exactly **2 papers** (chip selector with hard cap)
+2. Optionally add a comparison angle in the **🎯 对照角度** box (e.g. "compare on memory efficiency on long sequences")
+3. Click **⚖️ 开始对照**
+
+The LLM produces a 7-row markdown table comparing both papers on:
+- **核心问题** — what problem each paper attacks
+- **方法** — algorithmic approach in one sentence
+- **数据集** — datasets used
+- **评估指标** — metrics
+- **主要结果** — headline number (or "qualitative")
+- **局限性** — what each paper admits doesn't work
+- **复现难度** — easy / medium / hard (with reason)
+
+Plus an opinionated **"关键分歧与适用场景"** paragraph and a **"互相借鉴的具体建议"** list.
+
+Click `⤢ 放大` in the result section title to expand the report to fill the whole modal card; `⤡ 缩回` or `ESC` collapses. Use **💾 下载为 .md** / **📋 复制** to export.
+
+### 📚 AI 元综述 (Methodology meta-review, 3-8 papers)
+
+The "I want the forest, not the trees" button. Click **📚 AI元综述** in the toolbar:
+
+1. Search your library, pick **3–8 papers** (chip selector with a higher cap than Idea Spark)
+2. Optionally add a meta-review perspective in the **🔭 元综述视角** box (e.g. "focus on evaluation methodology")
+3. Click **📚 生成元综述**
+
+The LLM produces 6 fixed sections:
+- **1. 共同方法学背景** — 2-3 sentence framing of the methodology landscape
+- **2. 方法学分类法** — ≤3-level hierarchical taxonomy (top categories → branches → leaves)
+- **3. 跨论文差异矩阵** — markdown table, rows = papers, 4 cols (核心方法 / 数据集 / 评估方式 / 关键创新点)
+- **4. 方法学趋势** — converging / diverging / emerging (bullets, with judgment)
+- **5. 共同盲点** — assumptions every paper makes, evaluation gaps
+- **6. 关键洞察** — opinionated 1-paragraph synthesis in the "research collaborator" voice
+
+Use `⤢ 放大` / `⤡ 缩回` to read the matrix and the blind-spots section comfortably.
+
+Both AI 对照 and AI 元综述 have their own server-side history (`comparison_history.json` / `meta_review_history.json`, capped at 50 sessions each), accessible from the modal sidebar. Both are also exposed as Claude Code skills (`whiskershelf-compare`, `whiskershelf-meta-review`) for use inside generated CC projects.
+
 ### 🧠 Reasoning / CoT (Optional)
 
 For models that support chain-of-thought (DeepSeek-R1, Qwen3-Thinking, GLM-4.5, OpenAI o1/o3):
@@ -233,8 +281,10 @@ WhiskerShelf ships **5 Skills** that turn Claude Code into a research collaborat
 | `whiskershelf-web-search` | Search the **open literature** (arxiv, Semantic Scholar, etc.) | "Is there recent work on X?", brief cites a paper user doesn't have |
 | `whiskershelf-tag` | Read/write tags (with user-confirmation gate) | After completing a direction, organizing new artifacts |
 | `whiskershelf-subagents` | Delegate parallel exploration to subagents | "Give me a complete plan", "explore this in depth" |
+| `whiskershelf-compare` | Run AI 对照 (2 papers) via stdlib CLI | "Compare these two papers" from inside a generated CC project |
+| `whiskershelf-meta-review` | Run AI 元综述 (3-8 papers) via stdlib CLI | "Synthesize the methodology across these N papers" from inside a generated CC project |
 
-Combined workflow: CC reads the brief → proposes a plan → searches your library for context → if needed, searches the web for missing references → can spawn subagents to thoroughly explore cross-domain angles → executes step by step, tagging progress.
+Combined workflow: CC reads the brief → proposes a plan → searches your library for context → if needed, searches the web for missing references → can spawn subagents to thoroughly explore cross-domain angles → executes step by step, tagging progress. CC can also use `whiskershelf-compare` / `whiskershelf-meta-review` mid-execution when the user needs a focused comparison or methodology synthesis to inform a decision.
 
 ---
 
@@ -255,8 +305,8 @@ A cheat sheet for the "why not just use X" question:
 WhiskerShelf is the only tool that combines all three:
 
 1. **Local-first paper library** (PDFs never leave your disk)
-2. **LLM-driven cross-paper idea generation** (Idea Spark)
-3. **First-class Markdown export designed for Agent Coding** (drop the brief into Claude Code as a task)
+2. **LLM-driven cross-paper idea generation** (Idea Spark + AI 对照 + AI 元综述 — three different scales of synthesis on the same paper set)
+3. **First-class Markdown export designed for Agent Coding** (drop the brief into Claude Code as a task; compare / meta-review are also exportable as `.md`)
 
 ---
 
@@ -319,6 +369,7 @@ Edit CSS variables in `static/style.css` (`:root` block) for paper color, accent
 | AI features greyed out | Fill in API key, enable in 设置 |
 | "AI未配置或已禁用" | Same as above |
 | "请选择 2-4 篇论文" | Idea Spark needs at least 2 papers selected |
+| "请选择 3-8 篇论文" | AI 元综述 needs 3-8 papers; pick more or use Idea Spark instead |
 | Cat not visible | Make sure the "最近阅读" shelf has at least one paper (open any PDF first) |
 | PDFs not appearing | Click 🔄 刷新; check file extension is `.pdf` (case-insensitive) |
 | Encoding garbled in terminal (Windows) | The app already sets `PYTHONIOENCODING=utf-8` in `start.bat`; for `python app.py` direct, run `chcp 65001` first |
@@ -366,6 +417,9 @@ Please keep dependencies minimal — the spirit of the project is "stdlib + a sp
 - 🏷️ **AI 推荐标签** — 给论文摘要，AI 自动从标签库选最匹配的 1-3 个
 - 🧠 **AI 阅读习惯分析** — 把你的阅读记录交给 LLM，输出研究方向、知识盲点、推荐论文
 - 💡 **Idea Spark（核心）** — 选 2-4 篇论文，AI 跨论文碰撞，输出**结构化 Markdown 研究方向**，可直接喂给 Claude Code 当任务说明执行。开启思考模式还能看到模型的思维链。
+- ⚖️ **AI 对照** — 选**正好 2 篇**论文，AI 生成 7 行结构化对照表（核心问题/方法/数据集/评估指标/主要结果/局限性/复现难度）+ 1-2 段"关键分歧"立场化分析
+- 📚 **AI 元综述** — 选 **3-8 篇**论文，AI 生成 6 段方法学元综述（共同方法学背景 / 方法学分类法 / 跨论文差异矩阵 / 方法学趋势 / 共同盲点 / 关键洞察）
+- ⤢ **结果区放大/缩回** — Idea Spark / AI 对照 / AI 元综述 的结果区右上角有 `⤢ 放大` 按钮可放大到整卡阅读，按 `⤡ 缩回` 或 `ESC` 还原
 
 **键盘快捷键**：编辑标签时按 `Ctrl+S`（Mac: `Cmd+S`）保存。
 
